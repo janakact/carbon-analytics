@@ -18,6 +18,8 @@
  */
 package org.wso2.carbon.analytics.dataservice.core;
 
+import org.antlr.v4.runtime.misc.Pair;
+import org.antlr.v4.runtime.misc.Triple;
 import org.wso2.carbon.analytics.dataservice.commons.*;
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsIndexException;
 import org.wso2.carbon.analytics.datasource.commons.AnalyticsIterator;
@@ -410,5 +412,120 @@ public interface AnalyticsDataService {
      * Destroys and frees any resources taken up by the analytics data service implementation.
      */
     void destroy() throws AnalyticsException;
-    
+
+
+    //--------------- Multi Dimensional
+
+    //General
+    /**
+     * Searches for the general special points match for one of the given set of values.
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data.
+     * @param points  The set of Multi dimensional space points.
+     * @param start The start location of the result, 0 based
+     * @param count The number of points to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry} which are equal to one of given set of points
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchFormSet(int tenantId, String tableName, String columnName,
+                                         List<Number[]> points , int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+
+    /**
+     * Searches and gives the count for each range provided
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has multidimensional space data.
+     * @param rangeList  A list of ranges. Triples consist of the label, lower bound, upper bound
+     * @return A list of {@link org.antlr.v4.runtime.misc.Pair}. The pair consists of label and the count for each label.
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<Pair<String, Long>> rangeCount(int tenantId, String tableName, String columnName,
+                                        List<Triple<String,Number[], Number[]>> rangeList) throws AnalyticsException;
+
+
+    //Geo Spacial
+    /**
+     * Searches the nearest location points to the provided point.
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data.
+     * @param latitude  The latitude at the center: must be within standard +/-90 coordinate bounds
+     * @param longitude The longitude at the center: must be within standard +/-180 coordinate bounds.
+     * @param start The start location of the result, 0 based
+     * @param count The number of points to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchNearest(int tenantId, String tableName, String columnName,
+                                   double latitude, double longitude, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Searches the location points within the specified distance of the supplied location..
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data.
+     * @param latitude  The latitude at the center: must be within standard +/-90 coordinate bounds
+     * @param longitude The longitude at the center: must be within standard +/-180 coordinate bounds.
+     * @param radiusMeters The maximum distance from the center in meters. Must be non negative and finite.
+     * @param start The start location of the result, 0 based
+     * @param count The maximum number of result entries to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchWithinRadius(int tenantId, String tableName, String columnName,
+                                          double latitude, double longitude, double radiusMeters, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Searches the location points inside the given polygon.
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data.
+     * @param polygon  The polygon.
+     * @param start The start location of the result, 0 based
+     * @param count The maximum number of result entries to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchWithinPolygon(int tenantId, String tableName, String columnName,
+                                               GeoPolygon polygon, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Returns the number of points inside a give polygon in a geo space.
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data.
+     * @param polygon  The polygon.
+     * @return the count of points inside the given polygon
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    long recordCountWithinPolygon(int tenantId, String tableName, String columnName,
+                                                GeoPolygon polygon) throws AnalyticsException;
+
+    /**
+     * Return
+     * @param tenantId The tenant id
+     * @param tableName The table name
+     * @param columnName The name of the particular column which has geo spacial data
+     * @param polygonList  The list of pairs each has the label and particular polygon
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<Pair<String,Long>> recordCountsWithinPolygons(int tenantId, String tableName, String columnName,
+                                               Pair<String,GeoPolygon> polygonList) throws AnalyticsException;
+
+
+
 }
