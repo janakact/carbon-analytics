@@ -485,7 +485,7 @@ public interface AnalyticsDataService {
      * @throws AnalyticsIndexException
      * @throws AnalyticsException
      */
-    List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+    List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
 
     /**
      * Returns the number of points inside a give polygon in a geo space.
