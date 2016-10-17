@@ -1172,7 +1172,7 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         this.loadMultiDimensionalData();
 
         int tenantId = 0;
-        String tableName = "TX";
+        String tableName = "Airports";
         this.cleanupTable(tenantId, tableName);
 
         List<ColumnDefinition> columns = new ArrayList<>();
