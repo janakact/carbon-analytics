@@ -1446,6 +1446,7 @@ public class AnalyticsDataIndexer {
                 if (obj instanceof Number) {
                     doc.add(new IntPoint(name, ((Number) obj).intValue()));
                 } else {
+                    doc.add(new IntPoint(name,GenericUtils.parseToInt(obj.toString().split(","))));
                     doc.add(new StringField(name, obj.toString(), Store.NO));
                 }
                 break;
@@ -1453,6 +1454,7 @@ public class AnalyticsDataIndexer {
                 if (obj instanceof Number) {
                     doc.add(new DoublePoint(name, ((Number) obj).doubleValue()));
                 } else {
+                    doc.add(new DoublePoint(name,GenericUtils.parseToDouble(obj.toString().split(","))));
                     doc.add(new StringField(name, obj.toString(), Store.NO));
                 }
                 break;
@@ -1460,6 +1462,7 @@ public class AnalyticsDataIndexer {
                 if (obj instanceof Number) {
                     doc.add(new LongPoint(name, ((Number) obj).longValue()));
                 } else {
+                    doc.add(new LongPoint(name,GenericUtils.parseToLong(obj.toString().split(","))));
                     doc.add(new StringField(name, obj.toString(), Store.NO));
                 }
                 break;
@@ -1467,6 +1470,7 @@ public class AnalyticsDataIndexer {
                 if (obj instanceof Number) {
                     doc.add(new FloatPoint(name, ((Number) obj).floatValue()));
                 } else {
+                    doc.add(new FloatPoint(name,GenericUtils.parseToFloat(obj.toString().split(","))));
                     doc.add(new StringField(name, obj.toString(), Store.NO));
                 }
                 break;

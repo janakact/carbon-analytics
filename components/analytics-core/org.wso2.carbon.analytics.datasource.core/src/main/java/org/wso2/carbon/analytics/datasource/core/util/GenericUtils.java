@@ -810,5 +810,79 @@ public class GenericUtils {
                         ((value > 0.0f)?-1:+1));
         }
     }
-    
+
+    //Multi Dimensional
+    public static int[] parseToInt(String[] array)
+    {
+        int[] intArray = new int[array.length];
+
+        for(int i=0; i<array.length; i++)
+            intArray[i] = Integer.parseInt(array[i]);
+        return intArray;
+    }
+
+    public static int[] addToArray(int[] array, int number)
+    {
+        for(int i=0; i<array.length; i++)
+            array[i] = array[i]+number;
+        return array;
+    }
+
+    public static long[] parseToLong(String[] array)
+    {
+        long[] intArray = new long[array.length];
+
+        for(int i=0; i<array.length; i++)
+            intArray[i] = Long.parseLong(array[i]);
+        return intArray;
+    }
+
+    public static long[] addToArray(long[] array, long number)
+    {
+        for(int i=0; i<array.length; i++)
+            array[i] = array[i]+number;
+        return array;
+    }
+
+    public static float[] parseToFloat(String[] array)
+    {
+        float[] intArray = new float[array.length];
+
+        for(int i=0; i<array.length; i++)
+            intArray[i] = Float.parseFloat(array[i]);
+        return intArray;
+    }
+
+    public static float[] addToArray(float[] array, int number)
+    {
+        if(number>0)
+            for(int i=0; i<array.length; i++)
+                array[i] = nextUp(array[i]);
+        else if (number<0)
+            for(int i=0; i<array.length; i++)
+                array[i] = nextDown(array[i]);
+
+        return array;
+    }
+
+    public static double[] parseToDouble(String[] array)
+    {
+        double[] intArray = new double[array.length];
+
+        for(int i=0; i<array.length; i++)
+            intArray[i] = Double.parseDouble(array[i]);
+        return intArray;
+    }
+
+    public static double[] addToArray(double[] array, int number)
+    {
+        if(number>0)
+            for(int i=0; i<array.length; i++)
+                array[i] = nextUp(array[i]);
+        else if (number<0)
+            for(int i=0; i<array.length; i++)
+                array[i] = nextDown(array[i]);
+        return array;
+    }
+
 }

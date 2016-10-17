@@ -271,6 +271,13 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
             values.put("DB1", 54.535 + i);
             values.put("FL1", 3.14 + i);
             values.put("BL1", i % 2 == 0);
+
+//            //Multi Dimensional Points
+            values.put("MD_INT1", i+","+i*i);
+            values.put("MD_LN1", i+","+i*i);
+            values.put("MD_FL1", i+","+i*i);
+            values.put("MD_DB1", i+","+i*i);
+
             record = new Record(tenantId, tableName, values, startTimestamp + i * 10);
             result.add(record);
         }        
@@ -288,6 +295,13 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         columns.add(new ColumnDefinitionExt("DB1", ColumnType.DOUBLE, true, false));
         columns.add(new ColumnDefinitionExt("FL1", ColumnType.FLOAT, true, false));
         columns.add(new ColumnDefinitionExt("BL1", ColumnType.BOOLEAN, true, false));
+
+//        //Mult Dimensional Columns
+        columns.add(new ColumnDefinitionExt("MD_INT1", ColumnType.INTEGER, true, false));
+        columns.add(new ColumnDefinitionExt("MD_LN1", ColumnType.LONG, true, false));
+        columns.add(new ColumnDefinitionExt("MD_FL1", ColumnType.FLOAT, true, false));
+        columns.add(new ColumnDefinitionExt("MD_DB1", ColumnType.DOUBLE, true, false));
+
         this.service.createTable(tenantId, tableName);
         this.service.setTableSchema(tenantId, tableName, new AnalyticsSchema(columns, null));
         List<Record> records = this.generateIndexRecords(tenantId, tableName, n, 0);
@@ -325,6 +339,25 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
             result = this.service.search(tenantId, tableName, "BL1:[false TO true]", 0, 10);
             Assert.assertTrue(result.size() > 2);
         }
+
+        //Multi Dimensional Tests
+        result = this.service.search(tenantId, tableName, "MD_INT1:[-1,0 TO 1,0]" , 0, 10);
+        Assert.assertEquals(result.size(), 1);
+        result = this.service.search(tenantId, tableName, "MD_INT1:[-1,0 TO 1,0}" , 0, 10);
+        Assert.assertEquals(result.size(), 0);
+        result = this.service.search(tenantId, tableName, "MD_LN1:[-1,0 TO 1,0]" , 0, 10);
+        Assert.assertEquals(result.size(), 1);
+        result = this.service.search(tenantId, tableName, "MD_LN1:[-1,0 TO 1,0}" , 0, 10);
+        Assert.assertEquals(result.size(), 0);
+        result = this.service.search(tenantId, tableName, "MD_FL1:[-1,0 TO 1,0]" , 0, 10);
+        Assert.assertEquals(result.size(), 1);
+        result = this.service.search(tenantId, tableName, "MD_FL1:[-1,0 TO 1,0}" , 0, 10);
+        Assert.assertEquals(result.size(), 0);
+        result = this.service.search(tenantId, tableName, "MD_DB1:[-1,0 TO 1,0]" , 0, 10);
+        Assert.assertEquals(result.size(), 1);
+        result = this.service.search(tenantId, tableName, "MD_DB1:[-1,0 TO 1,0}" , 0, 10);
+        Assert.assertEquals(result.size(), 0);
+
         this.cleanupTable(tenantId, tableName);
     }
     

@@ -72,40 +72,40 @@ public class AnalyticsQueryParser extends QueryParser {
                 return super.getRangeQuery(field, part1, part2, si, ei);
             case INTEGER:
                 try {
-                    int p1 = Integer.parseInt(part1);
-                    int p2 = Integer.parseInt(part2);
-                    p1 = si?p1:p1+1;
-                    p2 = ei?p2:p2-1;
+                    int[] p1 = GenericUtils.parseToInt(part1.split(","));
+                    int[] p2 = GenericUtils.parseToInt(part2.split(","));
+                    p1 = si ? p1 : GenericUtils.addToArray(p1, 1);
+                    p2 = ei ? p2 : GenericUtils.addToArray(p2, -1);
                     return IntPoint.newRangeQuery(field, p1, p2);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid query, the field '" + field + "' must contain integers");
                 }
             case LONG:
                 try {
-                    long p1 = Long.parseLong(part1);
-                    long p2 = Long.parseLong(part2);
-                    p1 = si?p1:p1+1;
-                    p2 = ei?p2:p2-1;
+                    long[] p1 = GenericUtils.parseToLong(part1.split(","));
+                    long[] p2 = GenericUtils.parseToLong(part2.split(","));
+                    p1 = si ? p1 : GenericUtils.addToArray(p1, 1);
+                    p2 = ei ? p2 : GenericUtils.addToArray(p2, -1);
                     return LongPoint.newRangeQuery(field, p1, p2);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid query, the field '" + field + "' must contain long values");
                 }
             case DOUBLE:
                 try {
-                    double p1 = Double.parseDouble(part1);
-                    double p2 = Double.parseDouble(part2);
-                    p1 = si?p1: GenericUtils.nextUp(p1);
-                    p2 = ei?p2:GenericUtils.nextDown(p2);
+                    double[] p1 = GenericUtils.parseToDouble(part1.split(","));
+                    double[] p2 = GenericUtils.parseToDouble(part2.split(","));
+                    p1 = si ? p1 : GenericUtils.addToArray(p1, 1);
+                    p2 = ei ? p2 : GenericUtils.addToArray(p2, -1);
                     return DoublePoint.newRangeQuery(field, p1, p2);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid query, the field '" + field + "' must contain double values");
                 }
             case FLOAT:
                 try {
-                    float p1 = Float.parseFloat(part1);
-                    float p2 = Float.parseFloat(part2);
-                    p1 = si?p1:GenericUtils.nextUp(p1);
-                    p2 = ei?p2:GenericUtils.nextDown(p2);
+                    float[] p1 = GenericUtils.parseToFloat(part1.split(","));
+                    float[] p2 = GenericUtils.parseToFloat(part2.split(","));
+                    p1 = si ? p1 : GenericUtils.addToArray(p1, 1);
+                    p2 = ei ? p2 : GenericUtils.addToArray(p2, -1);
                     return FloatPoint.newRangeQuery(field,  p1, p2);
                 } catch (NumberFormatException e) {
                     throw new ParseException("Invalid query, the field '" + field + "' must contain float values");
