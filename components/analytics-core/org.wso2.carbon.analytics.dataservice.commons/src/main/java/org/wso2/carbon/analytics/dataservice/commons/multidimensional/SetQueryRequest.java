@@ -21,10 +21,8 @@ package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
 import java.util.List;
 
-public class SetQueryRequest {
+public class SetQueryRequest extends MultiDimensionalRequest {
 
-    private String tableName;
-    private String columnName;
     private List<Number[]> points;
 
     public SetQueryRequest(String tableName, String columnName, List<Number[]> points)

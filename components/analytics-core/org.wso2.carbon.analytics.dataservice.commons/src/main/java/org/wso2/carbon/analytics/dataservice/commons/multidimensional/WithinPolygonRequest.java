@@ -18,9 +18,7 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
-public class WithinPolygonRequest {
-    private String tableName;
-    private String columnName;
+public class WithinPolygonRequest extends MultiDimensionalRequest {
     private GeoPolygon polygon;
     public WithinPolygonRequest(String tableName, String columnName, GeoPolygon polygon) {
         this.tableName = tableName;

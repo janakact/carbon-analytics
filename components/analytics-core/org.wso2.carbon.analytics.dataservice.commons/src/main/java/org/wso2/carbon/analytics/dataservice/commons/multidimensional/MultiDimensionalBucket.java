@@ -18,18 +18,17 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
+import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsNotExicutedException;
 
-public class NearestPointsRequest extends MultiDimensionalRequest {
-    private double latitude;
-    private double longitude;
-    private long numberOfPoints;
+public abstract class MultiDimensionalBucket {
+    protected String label;
+    protected long count = -1;
 
-    public NearestPointsRequest(String tableName, String columnName, double latitude, double longitude, long numberOfPoints)
-    {
-        this.tableName = tableName;
-        this.columnName = columnName;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.numberOfPoints = numberOfPoints;
+
+    public long getCount() throws AnalyticsNotExicutedException {
+        if(count!=-1)
+            return count;
+        else
+            throw new AnalyticsNotExicutedException("Exicute Set Query");
     }
 }

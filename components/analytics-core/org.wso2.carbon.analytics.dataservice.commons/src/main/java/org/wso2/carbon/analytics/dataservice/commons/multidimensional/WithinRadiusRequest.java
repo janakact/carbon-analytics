@@ -18,10 +18,8 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
-public class WithinRadiusRequest {
+public class WithinRadiusRequest extends MultiDimensionalRequest {
 
-    private String tableName;
-    private String columnName;
     private double latitude;
     private double longitude;
     private double radius;

@@ -20,21 +20,12 @@ package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsNotExicutedException;
 
-public class GeoPolygonBucket {
-    private String label;
+public class GeoPolygonBucket extends MultiDimensionalBucket {
     private GeoPolygon polygon;
-    private long count;
 
     public GeoPolygonBucket(String label, GeoPolygon polygon)
     {
         this.label = label;
         this.polygon = polygon;
-    }
-
-    public long getCount() throws AnalyticsNotExicutedException {
-        if(count!=-1)
-            return count;
-        else
-            throw new AnalyticsNotExicutedException("Exicute Set Query");
     }
 }

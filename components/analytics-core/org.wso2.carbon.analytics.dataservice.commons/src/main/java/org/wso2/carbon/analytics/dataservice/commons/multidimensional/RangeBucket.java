@@ -24,16 +24,14 @@ import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsNotExicu
 /**
  * Created by wso2123 on 10/14/16.
  */
-public class RangeBucket {
-    private String lable;
+public class RangeBucket extends MultiDimensionalBucket {
     private Number[] lowerBound;
     private Number[] upperBound;
-    private long count = -1;
 
 
     public RangeBucket(String lable, Number[] lowerBound, Number[] upperBound)
     {
-        this.lable = lable;
+        this.label = lable;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
     }
