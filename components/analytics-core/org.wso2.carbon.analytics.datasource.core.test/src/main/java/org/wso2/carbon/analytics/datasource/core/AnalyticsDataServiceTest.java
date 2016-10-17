@@ -38,7 +38,7 @@ import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsTableNotAvailableException;
 import org.wso2.carbon.base.MultitenantConstants;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,6 +64,8 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
     private boolean becameLeader, leaderUpdated;
 
     private Random randomGenerator;
+
+    private List<String[]> multiDimensionalData;
                
     public void init(AnalyticsDataService service) {
         this.service = service;
@@ -1156,12 +1158,80 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         public ClusterGroupTestMessage(int data) {
             this.data = data;
         }
-        
+
         @Override
         public Integer call() throws Exception {
             return data + 1;
         }
         
+    }
+
+    @Test (enabled = true, dependsOnMethods = "testMultitenantDataAddGlobalDataRetrieve")
+    public void multiDimensionalTests() throws AnalyticsException {
+
+        this.loadMultiDimensionalData();
+
+        int tenantId = 0;
+        String tableName = "TX";
+        this.cleanupTable(tenantId, tableName);
+
+        List<ColumnDefinition> columns = new ArrayList<>();
+
+        //Mult Dimensional Columns
+        columns.add(new ColumnDefinitionExt("MULTI_DIM", ColumnType.DOUBLE, true, false));
+        columns.add(new ColumnDefinitionExt("LAT_LON", ColumnType.DOUBLE, true, false));
+
+        //Create table
+        this.service.createTable(tenantId, tableName);
+        this.service.setTableSchema(tenantId, tableName, new AnalyticsSchema(columns, null));
+
+        //Generate records and put to the index
+        List<Record> records = this.generateMultiDimensionalIndexRecords(tenantId, tableName, 0);
+        this.service.put(records);
+        this.service.waitForIndexing(DEFAULT_WAIT_TIME);
+
+        //Query and Check
+        List<SearchResultEntry> result  = this.service.search(tenantId, tableName, "MULTI_DIM:[0,0,0,0 TO 10,10,1,1]" , 0, 10);
+        Assert.assertEquals(result.size(), 6);
+
+        this.cleanupTable(tenantId, tableName);
+    }
+
+    private List<Record> generateMultiDimensionalIndexRecords(int tenantId, String tableName, long startTimestamp) {
+        Map<String, Object> values;
+        Record record;
+        List<Record> result = new ArrayList<>();
+
+        //Take each item and convert to a record
+        for(String[] item:multiDimensionalData)
+        {
+            values = new HashMap<>();
+            values.put("MULTI_DIM",item[6]+","+item[7]+","+item[8]+","+item[9]); // 6,7,8,9 lat lon Altitude TimeZone
+            values.put("LAT_LON",item[6]+","+item[7]); // 6,7 lat lon
+
+            record = new Record(tenantId, tableName, values, startTimestamp );
+            result.add(record);
+        }
+
+        return result;
+    }
+
+    private void loadMultiDimensionalData() throws AnalyticsException {
+
+        //ToDo Fix file loading method to a stable way
+        multiDimensionalData = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("/home/wso2123/airports.dat"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] tags = line.split(",");
+                if(tags.length==12)
+                    multiDimensionalData.add(tags);
+            }
+        }
+        catch (IOException e)
+        {
+            throw  new AnalyticsException("Multi Dimensional Data file is missing",e);
+        }
     }
 
 }
