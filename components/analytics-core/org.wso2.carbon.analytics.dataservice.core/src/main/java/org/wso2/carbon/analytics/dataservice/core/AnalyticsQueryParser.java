@@ -211,7 +211,7 @@ public class AnalyticsQueryParser extends QueryParser {
                     try {
                         return new SimpleDateFormat("yyyy-MM-dd").parse(textValue).getTime();
                     } catch (java.text.ParseException e) {
-                        throw new RuntimeException("Error in parsing long/timestamp field '" + 
+                        throw new NumberFormatException("Error in parsing long/timestamp field '" +
                                 textValue + "' : " + e.getMessage());
                     }
                 }
