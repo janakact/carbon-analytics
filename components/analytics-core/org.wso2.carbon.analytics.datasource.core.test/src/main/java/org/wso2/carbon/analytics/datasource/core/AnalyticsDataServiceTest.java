@@ -343,22 +343,23 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         }
 
         //Multi Dimensional Tests
-        result = this.service.search(tenantId, tableName, "MD_INT1:[-1,0 TO 1,0]" , 0, 10);
+        // Todo Add  better coverage + Fix reverse interval issue
+        result = this.service.search(tenantId, tableName, "MD_INT1:[0,0 TO "+n+","+(n*n)+"]" , 0, n+10);
+        Assert.assertEquals(result.size(), n);
+        result = this.service.search(tenantId, tableName, "MD_INT1:"+(n-1)+","+(n-1)*(n-1) , 0, n+10);
         Assert.assertEquals(result.size(), 1);
-        result = this.service.search(tenantId, tableName, "MD_INT1:[-1,0 TO 1,0}" , 0, 10);
-        Assert.assertEquals(result.size(), 0);
-        result = this.service.search(tenantId, tableName, "MD_LN1:[-1,0 TO 1,0]" , 0, 10);
+        result = this.service.search(tenantId, tableName, "MD_LN1:[0,0 TO "+n+","+(n*n)+"]", 0, n+10);
+        Assert.assertEquals(result.size(), n);
+        result = this.service.search(tenantId, tableName, "MD_LN1:"+(n-1)+","+(n-1)*(n-1) , 0, n+10);
         Assert.assertEquals(result.size(), 1);
-        result = this.service.search(tenantId, tableName, "MD_LN1:[-1,0 TO 1,0}" , 0, 10);
-        Assert.assertEquals(result.size(), 0);
-        result = this.service.search(tenantId, tableName, "MD_FL1:[-1,0 TO 1,0]" , 0, 10);
+        result = this.service.search(tenantId, tableName, "MD_FL1:[0,0 TO "+n+","+(n*n)+"]", 0, n+10);
+        Assert.assertEquals(result.size(), n);
+        result = this.service.search(tenantId, tableName, "MD_FL1:"+(n-1)+","+(n-1)*(n-1) , 0, n+10);
         Assert.assertEquals(result.size(), 1);
-        result = this.service.search(tenantId, tableName, "MD_FL1:[-1,0 TO 1,0}" , 0, 10);
-        Assert.assertEquals(result.size(), 0);
-        result = this.service.search(tenantId, tableName, "MD_DB1:[-1,0 TO 1,0]" , 0, 10);
+        result = this.service.search(tenantId, tableName, "MD_DB1:[0,0 TO "+n+","+(n*n)+"]" , 0, n+10);
+        Assert.assertEquals(result.size(), n);
+        result = this.service.search(tenantId, tableName, "MD_DB1:"+(n-1)+","+(n-1)*(n-1) , 0, n+10);
         Assert.assertEquals(result.size(), 1);
-        result = this.service.search(tenantId, tableName, "MD_DB1:[-1,0 TO 1,0}" , 0, 10);
-        Assert.assertEquals(result.size(), 0);
 
         this.cleanupTable(tenantId, tableName);
     }
