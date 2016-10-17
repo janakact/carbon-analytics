@@ -146,29 +146,45 @@ public class AnalyticsQueryParser extends QueryParser {
                 return super.newTermQuery(term);
             case INTEGER:
                 try {
-                    int value = Integer.parseInt(term.text());
-                    return IntPoint.newExactQuery(field,value);
+                    int[] values = GenericUtils.parseToInt(term.text().split(","));
+                    if(values.length==1)
+                        return IntPoint.newExactQuery(field,values[0]);
+                    else
+                        return IntPoint.newRangeQuery(field,values, values);
                 } catch (NumberFormatException e) {
                     throw new RuntimeException("Invalid query, the field '" + field + "' must contain integers");
                 }
             case LONG:
                 try {
-                    long value = this.parseTimestampOrDirectLong(term.text());
-                    return LongPoint.newExactQuery(field,value);
+                    try{
+                        return LongPoint.newExactQuery(field,this.parseTimestampOrDirectLong(term.text()));
+                    }
+                    catch (NumberFormatException e)
+                    {
+                        long[] values = GenericUtils.parseToLong(term.text().split(","));
+                        return LongPoint.newRangeQuery(field,values, values);
+                    }
                 } catch (NumberFormatException e) {
                     throw new RuntimeException("Invalid query, the field '" + field + "' must contain long values");
                 }
             case DOUBLE:
                 try {
-                    double value = Double.parseDouble(term.text());
-                    return DoublePoint.newExactQuery(field,value);
+                    double[] values = GenericUtils.parseToDouble(term.text().split(","));
+                    if(values.length==1)
+                        return DoublePoint.newExactQuery(field,values[0]);
+                    else
+                        return DoublePoint.newRangeQuery(field,values, values);
                 } catch (NumberFormatException e) {
                     throw new RuntimeException("Invalid query, the field '" + field + "' must contain double values");
                 }
             case FLOAT:
                 try {
-                    float value = Float.parseFloat(term.text());
-                    return FloatPoint.newExactQuery(field,value);
+
+                    float[] values = GenericUtils.parseToFloat(term.text().split(","));
+                    if(values.length==1)
+                        return FloatPoint.newExactQuery(field,values[0]);
+                    else
+                        return FloatPoint.newRangeQuery(field,values, values);
                 } catch (NumberFormatException e) {
                     throw new RuntimeException("Invalid query, the field '" + field + "' must contain float values");
                 }
