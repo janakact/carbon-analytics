@@ -21,4 +21,12 @@ package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 public abstract class MultiDimensionalRequest {
     protected String tableName;
     protected String columnName;
+
+    public String getTableName() {
+        return tableName;
+    }
+
+    public String getColumnName() {
+        return columnName;
+    }
 }

@@ -40,6 +40,7 @@ import org.apache.lucene.facet.taxonomy.writercache.LruTaxonomyWriterCache;
 import org.apache.lucene.facet.taxonomy.writercache.TaxonomyWriterCache;
 import org.apache.lucene.index.*;
 import org.apache.lucene.queries.function.ValueSource;
+import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
@@ -48,6 +49,7 @@ import org.apache.lucene.util.NumericUtils;
 import org.wso2.carbon.analytics.dataservice.commons.*;
 import org.wso2.carbon.analytics.dataservice.commons.Constants;
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsIndexException;
+import org.wso2.carbon.analytics.dataservice.commons.multidimensional.*;
 import org.wso2.carbon.analytics.dataservice.core.*;
 import org.wso2.carbon.analytics.dataservice.core.clustering.AnalyticsClusterException;
 import org.wso2.carbon.analytics.dataservice.core.clustering.AnalyticsClusterManager;
@@ -1454,7 +1456,12 @@ public class AnalyticsDataIndexer {
                 if (obj instanceof Number) {
                     doc.add(new DoublePoint(name, ((Number) obj).doubleValue()));
                 } else {
-                    doc.add(new DoublePoint(name,GenericUtils.parseToDouble(obj.toString().split(","))));
+                    double[] values = GenericUtils.parseToDouble(obj.toString().split(","));
+                    doc.add(new DoublePoint(name,values));
+                    if(values.length==2) {
+                        doc.add(new LatLonPoint(name+"_LatLon", values[0], values[1]));
+                        doc.add(new LatLonDocValuesField(name+"_LatLon", values[0], values[1]));
+                    }
                     doc.add(new StringField(name, obj.toString(), Store.NO));
                 }
                 break;
@@ -2538,5 +2545,265 @@ public class AnalyticsDataIndexer {
             return new HashSet<>();
         }
     }
-    
+
+
+    //TODO -- Multi Dimensional
+
+    public List<SearchResultEntry> searchBySet(int tenantId, SetQueryRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return null;
+    }
+
+    public List<RangeBucket> rangeCount(int tenantId, RangeBucketRequest request, String filterQuery) throws AnalyticsException {
+        return null;
+    }
+
+    public List<SearchResultEntry> searchNearest(int tenantId, NearestPointsRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        List<SearchResultEntry> result;
+        if (this.isClusteringEnabled()) {
+            //get all the records from 0th to the "start + count" th record from all the nodes, then sort, reverse and paginate
+            List<List<SearchResultEntry>> entries = this.executeIndexLookup(new NearestPointSearchCall(tenantId,
+                    request,filterQuery, 0, start + count, sortByFields));
+            Map<String, ColumnDefinition> indices = this.lookupIndices(tenantId, request.getTableName());
+            result = RecordSortUtils.getSortedSearchResultEntries(tenantId, request.getTableName(), sortByFields,
+                    indices, this.getAnalyticsDataService(), entries);
+            int toIndex = start + count;
+            if (toIndex >= result.size()) {
+                toIndex = result.size();
+            }
+            if (start < result.size()) {
+                result = new ArrayList<>(result.subList(start, toIndex));
+            } else {
+                result = new ArrayList<>(0);
+            }
+        } else {
+            result = this.doSearch(this.localShards, tenantId, request, filterQuery, start, count, sortByFields);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Search [Nearest Rearch- "+request.getColumnName()+" from "+request.getLatitude()+","+request.getLongitude()+"]" + result.size());
+        }
+        return result;
+    }
+
+    public List<SearchResultEntry> searchWithinRadius(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        List<SearchResultEntry> result;
+        if (this.isClusteringEnabled()) {
+            //get all the records from 0th to the "start + count" th record from all the nodes, then sort, reverse and paginate
+            List<List<SearchResultEntry>> entries = this.executeIndexLookup(new WithinRadiusSearchCall(tenantId,
+                    request,filterQuery, 0, start + count, sortByFields));
+            Map<String, ColumnDefinition> indices = this.lookupIndices(tenantId, request.getTableName());
+            result = RecordSortUtils.getSortedSearchResultEntries(tenantId, request.getTableName(), sortByFields,
+                    indices, this.getAnalyticsDataService(), entries);
+            int toIndex = start + count;
+            if (toIndex >= result.size()) {
+                toIndex = result.size();
+            }
+            if (start < result.size()) {
+                result = new ArrayList<>(result.subList(start, toIndex));
+            } else {
+                result = new ArrayList<>(0);
+            }
+        } else {
+            result = this.doSearch(this.localShards, tenantId, request, filterQuery, start, count, sortByFields);
+        }
+        if (log.isDebugEnabled()) {
+            log.debug("Search [Nearest Rearch- "+request.getColumnName()+" from "+request.getLatitude()+","+request.getLongitude()+"]" + result.size());
+        }
+        return result;
+    }
+
+    public List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return null;
+    }
+
+    public long recordCountWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery) throws AnalyticsException {
+        return 0;
+    }
+
+    public List<GeoPolygonBucket> recordCountsWithinPolygons(int tenantId, PolygonBucketRequest request, String filterQuery) throws AnalyticsException {
+        return null;
+    }
+
+
+
+    private List<SearchResultEntry> doSearch(Set<Integer> shardIndices, int tenantId, NearestPointsRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields)
+            throws AnalyticsIndexException {
+        List<SearchResultEntry> results = new ArrayList<>();
+        IndexReader reader = null;
+        if (count <= 0) {
+            log.error("Record Count/Page size is ZERO!. Please set Record count/Page size.");
+        }
+        try {
+            reader = this.getCombinedIndexReader(shardIndices, tenantId, request.getTableName());
+            IndexSearcher searcher = new IndexSearcher(reader, this.genericIndexExecutor);
+            Map<String, ColumnDefinition> indices = this.lookupIndices(tenantId, request.getTableName());
+
+            TopDocsCollector collector = TopFieldCollector.create(
+                    new Sort(LatLonDocValuesField.newDistanceSort(request.getColumnName()+"_LatLon",request.getLatitude(),request.getLongitude())),
+                    start + count, false, true, false);
+            Query indexQuery = getSearchQueryFromString(filterQuery, indices);
+            searcher.search(indexQuery, collector);
+            ScoreDoc[] hits = collector.topDocs(start).scoreDocs;
+            Document indexDoc;
+            for (ScoreDoc doc : hits) {
+                indexDoc = searcher.doc(doc.doc);
+                results.add(new SearchResultEntry(indexDoc.get(INDEX_ID_INTERNAL_FIELD), doc.score));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Local Search " + shardIndices + ": " + results.size());
+            }
+            return results;
+        } catch (Exception e) {
+            log.error("Error in index search: " + e.getMessage(), e);
+            throw new AnalyticsIndexException("Error in index search: " + e.getMessage(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    log.error("Error in closing the reader: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+
+    public static class NearestPointSearchCall extends IndexLookupOperationCall<List<SearchResultEntry>> {
+
+        private static final long serialVersionUID = -6551068087138398124L;
+
+        private int tenantId;
+
+        private NearestPointsRequest request;
+
+        private String filterQuery;
+
+        private int start;
+
+        private int count;
+
+        private List<SortByField> sortByFields;
+
+        public NearestPointSearchCall(int tenantId, NearestPointsRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) {
+            this.tenantId = tenantId;
+            this.request = request;
+            this.filterQuery = filterQuery;
+            this.start = start;
+            this.count = count;
+            this.sortByFields = sortByFields;
+        }
+
+        @Override
+        public List<SearchResultEntry> call() throws Exception {
+            AnalyticsDataService ads = AnalyticsServiceHolder.getAnalyticsDataService();
+            if (ads == null) {
+                throw new AnalyticsException("The analytics data service implementation is not registered");
+            }
+            if (ads instanceof AnalyticsDataServiceImpl) {
+                AnalyticsDataServiceImpl adsImpl = (AnalyticsDataServiceImpl) ads;
+                return adsImpl.getIndexer().doSearch(this.shardIndices, this.tenantId, this.request, filterQuery, this.start, this.count, sortByFields);
+            }
+            return new ArrayList<>();
+        }
+
+        @Override
+        public IndexLookupOperationCall<List<SearchResultEntry>> copy() {
+            return new NearestPointSearchCall(this.tenantId, this.request, this.filterQuery, this.start, this.count, sortByFields);
+        }
+
+    }
+
+
+
+    //Within radius
+    private List<SearchResultEntry> doSearch(Set<Integer> shardIndices, int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields)
+            throws AnalyticsIndexException {
+        List<SearchResultEntry> results = new ArrayList<>();
+        IndexReader reader = null;
+        if (count <= 0) {
+            log.error("Record Count/Page size is ZERO!. Please set Record count/Page size.");
+        }
+        try {
+            reader = this.getCombinedIndexReader(shardIndices, tenantId, request.getTableName());
+            IndexSearcher searcher = new IndexSearcher(reader, this.genericIndexExecutor);
+            Map<String, ColumnDefinition> indices = this.lookupIndices(tenantId, request.getTableName());
+
+            Query indexQuery = new BooleanQuery.Builder()
+                    .add(getSearchQueryFromString(filterQuery, indices), BooleanClause.Occur.FILTER)
+                    .add(LatLonPoint.newDistanceQuery(
+                            request.getColumnName()+"_LatLon",
+                            request.getLatitude(),request.getLongitude(),request.getRadius()), BooleanClause.Occur.FILTER).build();
+
+            TopDocsCollector collector = getTopDocsCollector(start, count, sortByFields, indices);
+            searcher.search(indexQuery, collector);
+            ScoreDoc[] hits = collector.topDocs(start).scoreDocs;
+            Document indexDoc;
+            for (ScoreDoc doc : hits) {
+                indexDoc = searcher.doc(doc.doc);
+                results.add(new SearchResultEntry(indexDoc.get(INDEX_ID_INTERNAL_FIELD), doc.score));
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Local Search " + shardIndices + ": " + results.size());
+            }
+            return results;
+        } catch (Exception e) {
+            log.error("Error in index search: " + e.getMessage(), e);
+            throw new AnalyticsIndexException("Error in index search: " + e.getMessage(), e);
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    log.error("Error in closing the reader: " + e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+
+    public static class WithinRadiusSearchCall extends IndexLookupOperationCall<List<SearchResultEntry>> {
+
+        private static final long serialVersionUID = -6551068087138398124L;
+
+        private int tenantId;
+
+        private WithinRadiusRequest request;
+
+        private String filterQuery;
+
+        private int start;
+
+        private int count;
+
+        private List<SortByField> sortByFields;
+
+        public WithinRadiusSearchCall(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) {
+            this.tenantId = tenantId;
+            this.request = request;
+            this.filterQuery = filterQuery;
+            this.start = start;
+            this.count = count;
+            this.sortByFields = sortByFields;
+        }
+
+        @Override
+        public List<SearchResultEntry> call() throws Exception {
+            AnalyticsDataService ads = AnalyticsServiceHolder.getAnalyticsDataService();
+            if (ads == null) {
+                throw new AnalyticsException("The analytics data service implementation is not registered");
+            }
+            if (ads instanceof AnalyticsDataServiceImpl) {
+                AnalyticsDataServiceImpl adsImpl = (AnalyticsDataServiceImpl) ads;
+                return adsImpl.getIndexer().doSearch(this.shardIndices, this.tenantId, this.request, filterQuery, this.start, this.count, sortByFields);
+            }
+            return new ArrayList<>();
+        }
+
+        @Override
+        public IndexLookupOperationCall<List<SearchResultEntry>> copy() {
+            return new WithinRadiusSearchCall(this.tenantId, this.request, this.filterQuery, this.start, this.count, sortByFields);
+        }
+
+    }
+
+
 }

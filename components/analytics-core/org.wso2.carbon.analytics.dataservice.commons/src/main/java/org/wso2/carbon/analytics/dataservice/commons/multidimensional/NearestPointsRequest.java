@@ -32,4 +32,16 @@ public class NearestPointsRequest extends MultiDimensionalRequest {
         this.longitude = longitude;
         this.numberOfPoints = numberOfPoints;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public long getNumberOfPoints() {
+        return numberOfPoints;
+    }
 }

@@ -21,31 +21,17 @@ package org.wso2.carbon.analytics.dataservice.core;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.wso2.carbon.analytics.dataservice.commons.AggregateRequest;
-import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse;
+import org.wso2.carbon.analytics.dataservice.commons.*;
 import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDataResponse.Entry;
-import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDrillDownRange;
-import org.wso2.carbon.analytics.dataservice.commons.AnalyticsDrillDownRequest;
-import org.wso2.carbon.analytics.dataservice.commons.CategoryDrillDownRequest;
-import org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry;
-import org.wso2.carbon.analytics.dataservice.commons.SortByField;
-import org.wso2.carbon.analytics.dataservice.commons.SubCategories;
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsIndexException;
+import org.wso2.carbon.analytics.dataservice.commons.multidimensional.*;
 import org.wso2.carbon.analytics.dataservice.core.clustering.AnalyticsClusterManager;
-import org.wso2.carbon.analytics.dataservice.core.config.AnalyticsDataPurgingConfiguration;
-import org.wso2.carbon.analytics.dataservice.core.config.AnalyticsDataPurgingIncludeTable;
-import org.wso2.carbon.analytics.dataservice.core.config.AnalyticsDataServiceConfigProperty;
-import org.wso2.carbon.analytics.dataservice.core.config.AnalyticsDataServiceConfiguration;
-import org.wso2.carbon.analytics.dataservice.core.config.AnalyticsRecordStoreConfiguration;
+import org.wso2.carbon.analytics.dataservice.core.config.*;
 import org.wso2.carbon.analytics.dataservice.core.indexing.AnalyticsDataIndexer;
 import org.wso2.carbon.analytics.dataservice.core.indexing.AnalyticsIndexedTableStore;
 import org.wso2.carbon.analytics.dataservice.core.indexing.AnalyticsIndexerInfo;
 import org.wso2.carbon.analytics.dataservice.core.tasks.AnalyticsGlobalDataPurgingTask;
-import org.wso2.carbon.analytics.datasource.commons.AnalyticsIterator;
-import org.wso2.carbon.analytics.datasource.commons.AnalyticsSchema;
-import org.wso2.carbon.analytics.datasource.commons.ColumnDefinition;
-import org.wso2.carbon.analytics.datasource.commons.Record;
-import org.wso2.carbon.analytics.datasource.commons.RecordGroup;
+import org.wso2.carbon.analytics.datasource.commons.*;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsException;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsTableNotAvailableException;
 import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsTimeoutException;
@@ -65,14 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 /**
@@ -1184,6 +1163,44 @@ public class AnalyticsDataServiceImpl implements AnalyticsDataService {
             ars.destroy();
         }
     }
+    //TODO implement these methods -----------------------------------------
+
+    @Override
+    public List<SearchResultEntry> searchBySet(int tenantId, SetQueryRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return null;
+    }
+
+    @Override
+    public List<RangeBucket> rangeCount(int tenantId, RangeBucketRequest request, String filterQuery) throws AnalyticsException {
+        return null;
+    }
+
+    @Override
+    public List<SearchResultEntry> searchNearest(int tenantId, NearestPointsRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return this.getIndexer().searchNearest(tenantId, request, filterQuery, start, count, sortByFields);
+    }
+
+    @Override
+    public List<SearchResultEntry> searchWithinRadius(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return this.getIndexer().searchWithinRadius(tenantId, request, filterQuery, start, count, sortByFields);
+    }
+
+    @Override
+    public List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException {
+        return null;
+    }
+
+    @Override
+    public long recordCountWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery) throws AnalyticsException {
+        return 0;
+    }
+
+    @Override
+    public List<GeoPolygonBucket> recordCountsWithinPolygons(int tenantId, PolygonBucketRequest request, String filterQuery) throws AnalyticsException {
+        return null;
+    }
+
+    //------------------- over
 
     private <T> List<List<T>> getChoppedLists(List<T> list, final int L) {
         List<List<T>> parts = new ArrayList<List<T>>();

@@ -32,4 +32,16 @@ public class WithinRadiusRequest extends MultiDimensionalRequest {
         this.longitude = longitude;
         this.radius = radiusInMeters;
     }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
 }

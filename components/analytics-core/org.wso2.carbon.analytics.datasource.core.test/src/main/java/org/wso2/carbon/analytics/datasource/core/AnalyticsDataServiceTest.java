@@ -20,6 +20,8 @@ package org.wso2.carbon.analytics.datasource.core;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.wso2.carbon.analytics.dataservice.commons.multidimensional.NearestPointsRequest;
+import org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinRadiusRequest;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataService;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsDataServiceUtils;
 import org.wso2.carbon.analytics.dataservice.core.AnalyticsServiceHolder;
@@ -1167,8 +1169,12 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         
     }
 
-    @Test (enabled = true, dependsOnMethods = "testMultitenantDataAddGlobalDataRetrieve")
+    @Test (enabled = false, dependsOnMethods = "testMultitenantDataAddGlobalDataRetrieve")
     public void multiDimensionalTests() throws AnalyticsException {
+
+
+        double colomboLat =  6.9270790;
+        double colomboLon =  79.8612430;
 
         this.loadMultiDimensionalData();
 
@@ -1194,6 +1200,14 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         //Query and Check
         List<SearchResultEntry> result  = this.service.search(tenantId, tableName, "MULTI_DIM:[0,0,0,0 TO 10,10,1,1]" , 0, 10);
         Assert.assertEquals(result.size(), 6);
+
+        NearestPointsRequest request = new NearestPointsRequest(tableName,"LAT_LON",colomboLat,colomboLon,100);
+        result  = this.service.searchNearest(tenantId, request,"" , 0, 10, null);
+        Assert.assertEquals(result.size(), 10);
+
+        WithinRadiusRequest withinRadiusRequest = new WithinRadiusRequest(tableName,"LAT_LON",colomboLat,colomboLon,500*1000);
+        result  = this.service.searchWithinRadius(tenantId, withinRadiusRequest,"" , 0, 30, null);
+        Assert.assertEquals(result.size(), 19);
 
         this.cleanupTable(tenantId, tableName);
     }

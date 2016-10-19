@@ -31,4 +31,8 @@ public class SetQueryRequest extends MultiDimensionalRequest {
         this.columnName = columnName;
         this.points = points;
     }
+
+    public List<Number[]> getPoints() {
+        return points;
+    }
 }

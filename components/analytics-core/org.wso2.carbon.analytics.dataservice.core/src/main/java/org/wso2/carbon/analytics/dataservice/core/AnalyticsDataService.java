@@ -417,98 +417,98 @@ public interface AnalyticsDataService {
 //    //--------------- Multi Dimensional ------------------------------------------------------------------------------------
 //     //---------------------------------------------------------------------------------------------------------------------
 //    //General
-//    /**
-//     * Searches for the general special points match for one of the given set of values.
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.SetQueryRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @param start The start location of the result, 0 based
-//     * @param count The number of points to be returned
-//     * @param sortByFields List of Fields by which the records needed to be sorted.
-//     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry} which are equal to one of given set of points
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<SearchResultEntry> searchBySet(int tenantId, SetQueryRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
-//
-//
-//    /**
-//     * Searches and gives the count for each range provided
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.RangeBucketRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @return A list of {@link org.antlr.v4.runtime.misc.Pair}. The pair consists of label and the count for each label.
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<RangeBucket> rangeCount(int tenantId, RangeBucketRequest request, String filterQuery) throws AnalyticsException;
-//
-//
-//    //Geo Spacial
-//    /**
-//     * Searches the nearest location points to the provided point.
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.NearestPointsRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @param start The start location of the result, 0 based
-//     * @param count The number of points to be returned
-//     * @param sortByFields List of Fields by which the records needed to be sorted.
-//     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<SearchResultEntry> searchNearest(int tenantId, NearestPointsRequest request, String filterQuery,  int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
-//
-//    /**
-//     * Searches the location points within the specified distance of the supplied location..
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinRadiusRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @param start The start location of the result, 0 based
-//     * @param count The maximum number of result entries to be returned
-//     * @param sortByFields List of Fields by which the records needed to be sorted.
-//     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<SearchResultEntry> searchWithinRadius(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
-//
-//    /**
-//     * Searches the location points inside the given polygon.
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @param start The start location of the result, 0 based
-//     * @param count The maximum number of result entries to be returned
-//     * @param sortByFields List of Fields by which the records needed to be sorted.
-//     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
-//
-//    /**
-//     * Returns the number of points inside a give polygon in a geo space.
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @return the count of points inside the given polygon
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    long recordCountWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery) throws AnalyticsException;
-//
-//    /**
-//     * Return
-//     * @param tenantId The tenant id
-//     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
-//     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
-//     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.PolygonBucketRequest}
-//     * @throws AnalyticsIndexException
-//     * @throws AnalyticsException
-//     */
-//    List<GeoPolygonBucket> recordCountsWithinPolygons(int tenantId, PolygonBucketRequest request, String filterQuery) throws AnalyticsException;
-//
+    /**
+     * Searches for the general special points match for one of the given set of values.
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.SetQueryRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @param start The start location of the result, 0 based
+     * @param count The number of points to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry} which are equal to one of given set of points
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchBySet(int tenantId, SetQueryRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+
+    /**
+     * Searches and gives the count for each range provided
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.RangeBucketRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @return A list of {@link org.antlr.v4.runtime.misc.Pair}. The pair consists of label and the count for each label.
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<RangeBucket> rangeCount(int tenantId, RangeBucketRequest request, String filterQuery) throws AnalyticsException;
+
+
+    //Geo Spacial
+    /**
+     * Searches the nearest location points to the provided point.
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.NearestPointsRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @param start The start location of the result, 0 based
+     * @param count The number of points to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchNearest(int tenantId, NearestPointsRequest request, String filterQuery,  int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Searches the location points within the specified distance of the supplied location..
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinRadiusRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @param start The start location of the result, 0 based
+     * @param count The maximum number of result entries to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchWithinRadius(int tenantId, WithinRadiusRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Searches the location points inside the given polygon.
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @param start The start location of the result, 0 based
+     * @param count The maximum number of result entries to be returned
+     * @param sortByFields List of Fields by which the records needed to be sorted.
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.SearchResultEntry}s
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<SearchResultEntry> searchWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery, int start, int count, List<SortByField> sortByFields) throws AnalyticsException;
+
+    /**
+     * Returns the number of points inside a give polygon in a geo space.
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @return the count of points inside the given polygon
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    long recordCountWithinPolygon(int tenantId, WithinPolygonRequest request, String filterQuery) throws AnalyticsException;
+
+    /**
+     * Return
+     * @param tenantId The tenant id
+     * @param request A {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.WithinPolygonRequest}
+     * @param filterQuery An optional query which can be used to filter points depending on the values of other columns
+     * @return A list of {@link org.wso2.carbon.analytics.dataservice.commons.multidimensional.PolygonBucketRequest}
+     * @throws AnalyticsIndexException
+     * @throws AnalyticsException
+     */
+    List<GeoPolygonBucket> recordCountsWithinPolygons(int tenantId, PolygonBucketRequest request, String filterQuery) throws AnalyticsException;
+
 
 
 }
