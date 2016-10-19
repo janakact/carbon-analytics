@@ -1458,7 +1458,7 @@ public class AnalyticsDataIndexer {
                 } else {
                     double[] values = GenericUtils.parseToDouble(obj.toString().split(","));
                     doc.add(new DoublePoint(name,values));
-                    if(values.length==2) {
+                    if(values.length==2 && values[0]<=90 && values[0]>=-90 && values[1]<=180 && values[1]>=-180) {
                         doc.add(new LatLonPoint(name+"_LatLon", values[0], values[1]));
                         doc.add(new LatLonDocValuesField(name+"_LatLon", values[0], values[1]));
                     }

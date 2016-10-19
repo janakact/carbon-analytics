@@ -1169,7 +1169,7 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         
     }
 
-    @Test (enabled = false, dependsOnMethods = "testMultitenantDataAddGlobalDataRetrieve")
+    @Test (enabled = true, dependsOnMethods = "testMultitenantDataAddGlobalDataRetrieve")
     public void multiDimensionalTests() throws AnalyticsException {
 
 
