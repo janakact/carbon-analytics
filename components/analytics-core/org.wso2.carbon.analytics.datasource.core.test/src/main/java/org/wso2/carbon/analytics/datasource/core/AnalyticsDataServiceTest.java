@@ -1185,6 +1185,7 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         List<ColumnDefinition> columns = new ArrayList<>();
 
         //Mult Dimensional Columns
+        columns.add(new ColumnDefinitionExt("NAME", ColumnType.STRING, true, false));
         columns.add(new ColumnDefinitionExt("MULTI_DIM", ColumnType.DOUBLE, true, false));
         columns.add(new ColumnDefinitionExt("LAT_LON", ColumnType.DOUBLE, true, false));
 
@@ -1208,6 +1209,8 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         WithinRadiusRequest withinRadiusRequest = new WithinRadiusRequest(tableName,"LAT_LON",colomboLat,colomboLon,500*1000);
         result  = this.service.searchWithinRadius(tenantId, withinRadiusRequest,"" , 0, 30, null);
         Assert.assertEquals(result.size(), 19);
+        result  = this.service.searchWithinRadius(tenantId, withinRadiusRequest,"NAME:Bandaranaike" , 0, 30, null);
+        Assert.assertEquals(result.size(), 1);
 
         this.cleanupTable(tenantId, tableName);
     }
@@ -1221,6 +1224,7 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
         for(String[] item:multiDimensionalData)
         {
             values = new HashMap<>();
+            values.put("NAME",item[1]+":"+item[6]+","+item[7]+","+item[8]+","+item[9]); // 6,7,8,9 lat lon Altitude TimeZone
             values.put("MULTI_DIM",item[6]+","+item[7]+","+item[8]+","+item[9]); // 6,7,8,9 lat lon Altitude TimeZone
             values.put("LAT_LON",item[6]+","+item[7]); // 6,7 lat lon
 
