@@ -18,9 +18,10 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PolygonBucketRequest {
+public class PolygonBucketRequest implements Serializable {
     private String tableName;
     private String columnName;
     private List<GeoPolygonBucket> polygonBuckets;

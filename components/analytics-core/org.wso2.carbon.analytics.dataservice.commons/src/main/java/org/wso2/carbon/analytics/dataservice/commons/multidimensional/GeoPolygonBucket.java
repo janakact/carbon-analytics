@@ -20,7 +20,9 @@ package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsNotExicutedException;
 
-public class GeoPolygonBucket extends MultiDimensionalBucket {
+import java.io.Serializable;
+
+public class GeoPolygonBucket extends MultiDimensionalBucket implements Serializable {
     private GeoPolygon polygon;
 
     public GeoPolygonBucket(String label, GeoPolygon polygon)

@@ -15,10 +15,12 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
+import java.io.Serializable;
+
 /*
 This class represents a polygon in a geo space.
  */
-public class GeoPolygon {
+public class GeoPolygon implements Serializable {
     private double[] latitudes;
     private double[] longitudes;
     private GeoPolygon[] holes;

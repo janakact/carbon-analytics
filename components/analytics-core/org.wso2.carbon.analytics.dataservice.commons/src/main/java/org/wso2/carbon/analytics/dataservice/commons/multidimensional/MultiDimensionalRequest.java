@@ -18,7 +18,9 @@
  */
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
-public abstract class MultiDimensionalRequest {
+import java.io.Serializable;
+
+public abstract class MultiDimensionalRequest implements Serializable {
     protected String tableName;
     protected String columnName;
 

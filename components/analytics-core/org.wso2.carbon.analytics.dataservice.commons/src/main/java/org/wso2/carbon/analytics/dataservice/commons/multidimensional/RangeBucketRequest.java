@@ -19,9 +19,10 @@
 
 package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class RangeBucketRequest {
+public class RangeBucketRequest implements Serializable {
 
     private String tableName;
     private String columnName;

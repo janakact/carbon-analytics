@@ -20,7 +20,9 @@ package org.wso2.carbon.analytics.dataservice.commons.multidimensional;
 
 import org.wso2.carbon.analytics.dataservice.commons.exception.AnalyticsNotExicutedException;
 
-public abstract class MultiDimensionalBucket {
+import java.io.Serializable;
+
+public abstract class MultiDimensionalBucket implements Serializable {
     protected String label;
     protected long count = -1;
 
