@@ -41,6 +41,7 @@ import org.wso2.carbon.analytics.datasource.commons.exception.AnalyticsTableNotA
 import org.wso2.carbon.base.MultitenantConstants;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1239,7 +1240,7 @@ public class AnalyticsDataServiceTest implements GroupEventListener {
 
         //ToDo Fix file loading method to a stable way
         multiDimensionalData = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader("/home/wso2123/airports.dat"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(Paths.get("").toAbsolutePath().toString() + File.separator + "src/test/resources/airports.txt"))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] tags = line.split(",");

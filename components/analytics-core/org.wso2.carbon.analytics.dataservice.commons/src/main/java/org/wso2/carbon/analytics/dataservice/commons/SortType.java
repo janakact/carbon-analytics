@@ -23,5 +23,5 @@ import java.io.Serializable;
  */
 public enum SortType  implements Serializable {
 
-    ASC, DESC
+    ASC, DESC, ASC_DISTANCE
 }

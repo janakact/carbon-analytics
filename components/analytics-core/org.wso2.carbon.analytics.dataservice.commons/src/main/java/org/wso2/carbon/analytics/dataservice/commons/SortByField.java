@@ -18,6 +18,8 @@
 package org.wso2.carbon.analytics.dataservice.commons;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This class represents an object which is used to sort the result by any given field name in a given
@@ -30,6 +32,10 @@ public class SortByField implements Serializable {
     private String fieldName;
     private SortType sortType;
 
+    private Map<Integer,Object> config = new HashMap<Integer, Object>();
+    public static final int LATITUDE_KEY = 1;
+    public static final int LONGITUDE_KEY = 2;
+
     public SortByField() {
 
     }
@@ -37,6 +43,14 @@ public class SortByField implements Serializable {
     public SortByField(String field, SortType sortType) {
         this.fieldName = field;
         this.sortType = sortType;
+    }
+
+    public SortByField(String field, double latitude, double longitude)
+    {
+        this.fieldName = field;
+        this.sortType = SortType.ASC_DISTANCE;
+        getConfig().put(LATITUDE_KEY, latitude);
+        getConfig().put(LONGITUDE_KEY, longitude);
     }
 
     public String getFieldName() {
@@ -53,5 +67,9 @@ public class SortByField implements Serializable {
 
     public void setSortType(SortType sortType) {
         this.sortType = sortType;
+    }
+
+    public Map<Integer, Object> getConfig() {
+        return config;
     }
 }

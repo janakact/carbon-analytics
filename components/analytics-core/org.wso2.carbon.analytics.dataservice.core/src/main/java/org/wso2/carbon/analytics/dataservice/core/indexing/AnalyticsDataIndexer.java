@@ -529,10 +529,17 @@ public class AnalyticsDataIndexer {
                 case DESC:
                     sortField = new SortField(fieldName, getSortFieldType(fieldName, indices), true);
                     break;
+                case ASC_DISTANCE:
+                    Map<Integer,Object> config = sortByField.getConfig();
+                    sortField = LatLonDocValuesField.newDistanceSort(fieldName,
+                            (double)config.get(SortByField.LATITUDE_KEY) ,
+                            (double)config.get(SortByField.LONGITUDE_KEY) );
+                    break;
                 default:
                     throw new AnalyticsIndexException("Error while processing Sorting fields: " +
-                                                 sortByField.getSortType().toString() + " unsupported sortType");
+                            sortByField.getSortType().toString() + " unsupported sortType");
             }
+
             sortFields.add(sortField);
         }
         return sortFields.toArray(new SortField[sortFields.size()]);
